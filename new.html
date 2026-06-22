@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --navy:       #0f172a;
+        --slate:      #1e293b;
+        --border:     #e2e8f0;
+        --bg:         #f1f5f9;
+        --blue:       #0ea5e9;
+        --blue-light: #eff6ff;
+        --green:      #16a34a;
+        --red:        #dc2626;
+        --muted:      #64748b;
+    }
+
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--slate);
+        font-size: 14px;
+        line-height: 1.5;
+        max-width: 560px;
+        margin: 0 auto;
+    }
+
+    /* ── HEADER ── */
+    .header {
+        background: var(--navy);
+        color: #f8fafc;
+        padding: 20px 16px 16px;
+    }
+    .header h1 { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.4; }
+    .header p  { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+    .header-stats { display: flex; gap: 8px; margin-top: 12px; }
+    .stat-chip {
+        flex: 1;
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 8px 10px;
+    }
+    .stat-chip .lbl { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 0.4px; }
+    .stat-chip .val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--blue); font-weight: 500; margin-top: 2px; }
+
+    /* ── INFO STRIPS ── */
+    .info-strip { padding: 10px 16px; font-size: 12px; border-bottom: 1px solid #bfdbfe; }
+    .info-strip.a { background: #eff6ff; color: #1e40af; }
+    .info-strip.b { background: #e0f2fe; color: #075985; }
+    .info-strip strong {
+        display: block; font-size: 10px; text-transform: uppercase;
+        letter-spacing: 0.5px; margin-bottom: 2px; opacity: 0.75;
+    }
+
+    /* ── CONTENT ── */
+    .content { padding: 14px 14px 20px; display: flex; flex-direction: column; gap: 22px; }
+
+    /* ── SECTION HEADER ── */
+    .sec-hdr { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .sec-num {
+        background: var(--navy); color: white;
+        font-size: 10px; font-weight: 700;
+        padding: 2px 8px; border-radius: 3px;
+        text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+    }
+    .sec-name {
+        font-size: 11px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.7px;
+        color: var(--muted); border-bottom: 1.5px solid var(--border);
+        flex: 1; padding-bottom: 4px;
+    }
+
+    /* ── BASELINE CARD (compact) ── */
+    .baseline-card {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-radius: 10px;
+        padding: 12px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+    .baseline-card .bc-left .title { font-size: 13px; font-weight: 700; }
+    .baseline-card .bc-left .sub   { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .baseline-card .bc-right { display: flex; gap: 16px; }
+    .baseline-card .bc-metric .lbl { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.3px; }
+    .baseline-card .bc-metric .val { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; line-height: 1; color: var(--red); }
+    .baseline-card .bc-metric .unit { font-size: 13px; }
+
+    /* ── COOLER CARDS ── */
+    .cards { display: flex; flex-direction: column; gap: 10px; }
+    .card {
+        background: white; border-radius: 10px;
+        border: 1px solid var(--border); overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .card-head {
+        padding: 11px 14px;
+        display: flex; justify-content: space-between; align-items: flex-start;
+        border-bottom: 1px solid var(--border);
+    }
+    .card-head .name { font-size: 13px; font-weight: 700; }
+    .card-head .sub  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .card-head .meta { font-size: 10px; color: var(--muted); text-align: right; line-height: 1.7; white-space: nowrap; }
+    .card.x9  .card-head { background: #f0fdf4; }
+    .card.th19 .card-head { background: var(--blue-light); }
+
+    .card-body {
+        padding: 12px 14px;
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    }
+    .metric .m-lbl  { font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); margin-bottom: 4px; }
+    .metric .m-val  { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; line-height: 1; }
+    .metric .m-unit { font-size: 13px; }
+    .metric .m-sub  { font-size: 10px; color: var(--muted); margin-top: 3px; }
+    .metric.delta-col .m-val { font-size: 15px; }
+
+    .hot   { color: var(--red);   font-weight: 600; }
+    .cool  { color: var(--green); font-weight: 600; }
+    .delta { color: #1d4ed8;      font-weight: 700; }
+    .na    { color: #94a3b8; }
+
+    .group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: 12px 0 6px; padding-left: 2px; }
+    .group-label:first-child { margin-top: 0; }
+
+    /* ── DELTA TABLE ── */
+    .delta-table {
+        background: white; border-radius: 10px;
+        border: 1px solid var(--border); overflow: hidden;
+    }
+    .delta-row {
+        display: flex; align-items: center;
+        padding: 12px 14px; gap: 10px;
+        border-bottom: 1px solid var(--border);
+    }
+    .delta-row:last-child { border-bottom: none; }
+    .delta-row .dr-label { flex: 1; font-size: 12px; font-weight: 600; }
+    .delta-row .dr-label .dr-sub { font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+    .delta-row .dr-nums { display: flex; gap: 10px; }
+    .delta-chip {
+        background: var(--blue-light);
+        color: #1d4ed8; font-family: 'DM Mono', monospace;
+        font-size: 13px; font-weight: 700;
+        padding: 4px 10px; border-radius: 6px;
+        white-space: nowrap; text-align: center;
+    }
+    .delta-chip .dc-lbl { font-size: 9px; color: #64748b; font-weight: 400; font-family: 'DM Sans', sans-serif; display: block; }
+
+    /* ── TABLES (raw data) ── */
+    .scroll-hint { font-size: 10px; color: #94a3b8; font-style: italic; margin-bottom: 4px; text-align: right; }
+    .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 6px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; background: white; font-size: 12px; min-width: 500px; }
+    th {
+        background: var(--slate); color: #cbd5e1;
+        font-size: 10px; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 0.3px; padding: 8px 10px; text-align: center; white-space: nowrap;
+    }
+    td {
+        border: 1px solid var(--border); padding: 8px 10px;
+        text-align: center; vertical-align: middle;
+        font-family: 'DM Mono', monospace; font-size: 12px; white-space: nowrap;
+    }
+    td.txt { font-family: 'DM Sans', sans-serif; text-align: left; white-space: normal; font-size: 12px; min-width: 140px; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .gr td {
+        background: #f1f5f9 !important; font-family: 'DM Sans', sans-serif !important;
+        font-weight: 600; font-size: 11px; color: var(--muted); text-align: center;
+    }
+
+    .note { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 6px; line-height: 1.5; }
+
+    .trophy-badge {
+        display: inline-block;
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        color: #b45309;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 20px;
+        margin-left: 6px;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+        background: var(--navy); color: #475569;
+        font-size: 10px; text-align: center; padding: 14px 16px;
+    }
+
+    @media (min-width: 580px) {
+        body { box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+    }
+    @media print {
+        @page { size: A4 portrait; margin: 10mm; }
+        body  { max-width: 100%; font-size: 9pt; box-shadow: none; }
+        .tbl-wrap { overflow: visible; border: none; }
+        table { min-width: unset; }
+        .scroll-hint { display: none; }
+        .donate-fab-wrap { display: none; }
+    }
+
+    /* ── DONATE FAB ── */
+    .donate-fab-wrap { position: fixed; right: 18px; bottom: 18px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+    .donate-fab { width: 52px; height: 52px; border-radius: 50%; background: var(--navy); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
+    .donate-fab span { display: block; width: 22px; height: 2px; background: #f8fafc; margin: 3px 0; border-radius: 2px; transition: all 0.25s ease; }
+    .donate-fab.open span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+    .donate-fab.open span:nth-child(2) { opacity: 0; }
+    .donate-fab.open span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+    .donate-menu { background: #ffffff; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); overflow: hidden; opacity: 0; transform: translateY(8px) scale(0.96); pointer-events: none; transition: all 0.18s ease; }
+    .donate-menu.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .donate-menu a { display: flex; align-items: center; gap: 8px; padding: 12px 16px; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--red); text-decoration: none; white-space: nowrap; }
+    .donate-menu a:active { background: #fef2f2; }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════ -->
+<div class="header">
+    <h1>Database Pengujian Termal<br>Ripki — V24</h1>
+    <p>Data terbaik per kategori &nbsp;·&nbsp; Semua suhu dalam °C</p>
+    <div class="header-stats">
+        <div class="stat-chip">
+            <div class="lbl">Skenario Aktif</div>
+            <div class="val">12 Data</div>
+        </div>
+        <div class="stat-chip">
+            <div class="lbl">Cooler Diuji</div>
+            <div class="val">4 Unit</div>
+        </div>
+        <div class="stat-chip">
+            <div class="lbl">Versi</div>
+            <div class="val">V24</div>
+        </div>
+    </div>
+</div>
+
+<!-- ══ INFO STRIPS ══════════════════════════════════════════════ -->
+<div class="info-strip b">
+    <strong>📐 Cara Hitung Δ (Delta)</strong>
+    Selisih suhu akhir vs Baseline 09 Mei 2026 — semakin besar turun, semakin efektif
+</div>
+
+<div class="content">
+
+    <!-- ══ SECTION 1: BASELINE ══════════════════════════════════ -->
+    <div>
+        <div class="sec-hdr">
+            <span class="sec-num">1</span>
+            <span class="sec-name">Kondisi Awal — Tanpa Pendingin (Baseline)</span>
+        </div>
+        <div class="baseline-card">
+            <div class="bc-left">
+                <div class="title">🌡️ Tanpa Pendingin</div>
+                <div class="sub">09 Mei 2026 | 06:17 — Acuan Dasar<br>Baterai awal 31,1° &nbsp;|&nbsp; CPU awal 31,9°</div>
+            </div>
+            <div class="bc-right">
+                <div class="bc-metric">
+                    <div class="lbl">Baterai Akhir</div>
+                    <div class="val">38,9<span class="unit">°</span></div>
+                </div>
+                <div class="bc-metric">
+                    <div class="lbl">CPU Akhir</div>
+                    <div class="val">40,2<span class="unit">°</span></div>
+                </div>
+            </div>
+        </div>
+        <p class="note">* Ini kondisi HP tanpa pendingin apapun. Semua delta dihitung dari suhu akhir di sini.</p>
+    </div>
+
+    <!-- ══ SECTION 2: HASIL COOLER ══════════════════════════════ -->
+    <div>
+        <div class="sec-hdr">
+            <span class="sec-num">2</span>
+            <span class="sec-name">Hasil Setelah Pakai Cooler</span>
+        </div>
+        <div class="cards">
+
+            <!-- TH-28 -->
+            <div class="group-label">TH-28 Pro — 29 Watt</div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <div class="name">🥇 TH-28 Pro</div>
+                        <div class="sub">Level 3 + heatsink legendary modif</div>
+                    </div>
+                    <div class="meta">09 Juni 2026 | 15:40<br>29 Watt</div>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <div class="m-lbl">Baterai Akhir</div>
+                        <div class="m-val cool">25,8<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 30,3°</div>
+                    </div>
+                    <div class="metric">
+                        <div class="m-lbl">CPU Akhir</div>
+                        <div class="m-val cool">31,3<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 33,9°</div>
+                    </div>
+                    <div class="metric delta-col">
+                        <div class="m-lbl">vs Baseline</div>
+                        <div class="m-val delta">▼13,1°<br>▼8,9°</div>
+                        <div class="m-sub">Baterai / CPU</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <div class="name">🥈 TH-28 Pro</div>
+                        <div class="sub">Level 3 + Menggunakan Heatsink A1 Modif</div>
+                    </div>
+                    <div class="meta">21 Juni 2026 | 14:55<br>29 Watt</div>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <div class="m-lbl">Baterai Akhir</div>
+                        <div class="m-val cool">26,2<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 28,8°</div>
+                    </div>
+                    <div class="metric">
+                        <div class="m-lbl">CPU Akhir</div>
+                        <div class="m-val cool">31,8<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 32,0°</div>
+                    </div>
+                    <div class="metric delta-col">
+                        <div class="m-lbl">vs Baseline</div>
+                        <div class="m-val delta">▼12,7°<br>▼8,4°</div>
+                        <div class="m-sub">Baterai / CPU</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <div class="name">🥉 TH-28 Pro</div>
+                        <div class="sub">Level 3 - Tanpa heatsink</div>
+                    </div>
+                    <div class="meta">09 Juni 2026 | 15:19<br>29 Watt</div>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <div class="m-lbl">Baterai Akhir</div>
+                        <div class="m-val cool">24,7<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 31,4°</div>
+                    </div>
+                    <div class="metric">
+                        <div class="m-lbl">CPU Akhir</div>
+                        <div class="m-val cool">32,2<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 34,1°</div>
+                    </div>
+                    <div class="metric delta-col">
+                        <div class="m-lbl">vs Baseline</div>
+                        <div class="m-val delta">▼14,2°<br>▼8,0°</div>
+                        <div class="m-sub">Baterai / CPU</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <div class="name">TH-28 Pro</div>
+                        <div class="sub">Level 3 + Case DIY (Tanpa thermal paste)</div>
+                    </div>
+                    <div class="meta">09 Juni 2026 | 16:49<br>29 Watt</div>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <div class="m-lbl">Baterai Akhir</div>
+                        <div class="m-val cool">28,1<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 29,2°</div>
+                    </div>
+                    <div class="metric">
+                        <div class="m-lbl">CPU Akhir</div>
+                        <div class="m-val cool">33,0<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 31,8°</div>
+                    </div>
+                    <div class="metric delta-col">
+                        <div class="m-lbl">vs Baseline</div>
+                        <div class="m-val delta">▼10,8°<br>▼7,2°</div>
+                        <div class="m-sub">Baterai / CPU</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KAZURA -->
+            <div class="group-label">Kazura Z1 Pro+ — 20 Watt</div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <div class="name">Kazura Z1 Pro+</div>
+                        <div class="sub">Level 3 + heatsink A1 non modif</div>
+                    </div>
+                    <div class="meta">04 Juni 2026 | 15:21<br>20 Watt</div>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <div class="m-lbl">Baterai Akhir</div>
+                        <div class="m-val cool">28,0<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 31,7°</div>
+                    </div>
+                    <div class="metric">
+                        <div class="m-lbl">CPU Akhir</div>
+                        <div class="m-val cool">33,0<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 35,9°</div>
+                    </div>
+                    <div class="metric delta-col">
+                        <div class="m-lbl">vs Baseline</div>
+                        <div class="m-val delta">▼10,9°<br>▼7,2°</div>
+                        <div class="m-sub">Baterai / CPU</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <div class="name">Kazura Z1 Pro+</div>
+                        <div class="sub">Level 3 + Case DIY (Tanpa thermal paste)</div>
+                    </div>
+                    <div class="meta">06 Juni 2026 | 16:06<br>20 Watt</div>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <div class="m-lbl">Baterai Akhir</div>
+                        <div class="m-val cool">28,7<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 29,6°</div>
+                    </div>
+                    <div class="metric">
+                        <div class="m-lbl">CPU Akhir</div>
+                        <div class="m-val cool">33,9<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 33,1°</div>
+                    </div>
+                    <div class="metric delta-col">
+                        <div class="m-lbl">vs Baseline</div>
+                        <div class="m-val delta">▼10,2°<br>▼6,3°</div>
+                        <div class="m-sub">Baterai / CPU</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <div class="name">Kazura Z1 Pro+</div>
+                        <div class="sub">Level 3 + Stiker Magnet Aluminum Alloy</div>
+                    </div>
+                    <div class="meta">04 Juni 2026 | 14:56<br>20 Watt</div>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <div class="m-lbl">Baterai Akhir</div>
+                        <div class="m-val cool">29,1<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 31,2°</div>
+                    </div>
+                    <div class="metric">
+                        <div class="m-lbl">CPU Akhir</div>
+                        <div class="m-val cool">34,1<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 33,4°</div>
+                    </div>
+                    <div class="metric delta-col">
+                        <div class="m-lbl">vs Baseline</div>
+                        <div class="m-val delta">▼9,8°<br>▼6,1°</div>
+                        <div class="m-sub">Baterai / CPU</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TH-19 -->
+            <div class="group-label">TH-19 Pro — 20 Watt</div>
+            <div class="card th19">
+                <div class="card-head">
+                    <div>
+                        <div class="name">❄️ TH-19 Pro</div>
+                        <div class="sub">Level 3 + heatsink legendary modif</div>
+                    </div>
+                    <div class="meta">12 Mei 2026 | 11:11<br>20 Watt</div>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <div class="m-lbl">Baterai Akhir</div>
+                        <div class="m-val cool">31,3<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 30,6°</div>
+                    </div>
+                    <div class="metric">
+                        <div class="m-lbl">CPU Akhir</div>
+                        <div class="m-val cool">35,1<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 32,8°</div>
+                    </div>
+                    <div class="metric delta-col">
+                        <div class="m-lbl">vs Baseline</div>
+                        <div class="m-val delta">▼7,6°<br>▼5,1°</div>
+                        <div class="m-sub">Baterai / CPU</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- X9 -->
+            <div class="group-label">Cooler X9 — 6 Watt</div>
+            <div class="card x9">
+                <div class="card-head">
+                    <div>
+                        <div class="name">❄️ Cooler X9</div>
+                        <div class="sub">Menggunakan heatsink legendary modif</div>
+                    </div>
+                    <div class="meta">11 Mei 2026 | 06:38<br>6 Watt</div>
+                </div>
+                <div class="card-body">
+                    <div class="metric">
+                        <div class="m-lbl">Baterai Akhir</div>
+                        <div class="m-val cool">34,1<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 33,4°</div>
+                    </div>
+                    <div class="metric">
+                        <div class="m-lbl">CPU Akhir</div>
+                        <div class="m-val cool">36,4<span class="m-unit">°</span></div>
+                        <div class="m-sub">Awal: 34,4°</div>
+                    </div>
+                    <div class="metric delta-col">
+                        <div class="m-lbl">vs Baseline</div>
+                        <div class="m-val delta">▼4,8°<br>▼3,8°</div>
+                        <div class="m-sub">Baterai / CPU</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ══ SECTION 3: DELTA RINGKASAN ═══════════════════════════ -->
+    <div>
+        <div class="sec-hdr">
+            <span class="sec-num">3</span>
+            <span class="sec-name">Selisih vs Baseline (Δ)</span>
+        </div>
+        <div class="delta-table">
+            <div class="delta-row">
+                <div class="dr-label">
+                    🥇 TH-28 Pro
+                    <div class="dr-sub">29 Watt · heatsink legendary modif · 09 Juni 15:40</div>
+                </div>
+                <div class="dr-nums">
+                    <div class="delta-chip">
+                        <span class="dc-lbl">Baterai</span>
+                        ▼ 13,1°
+                    </div>
+                    <div class="delta-chip">
+                        <span class="dc-lbl">CPU</span>
+                        ▼ 8,9°
+                    </div>
+                </div>
+            </div>
+            <div class="delta-row">
+                <div class="dr-label">
+                    🥈 TH-28 Pro
+                    <div class="dr-sub">29 Watt · heatsink A1 modif · 21 Juni 14:55</div>
+                </div>
+                <div class="dr-nums">
+                    <div class="delta-chip">
+                        <span class="dc-lbl">Baterai</span>
+                        ▼ 12,7°
+                    </div>
+                    <div class="delta-chip">
+                        <span class="dc-lbl">CPU</span>
+                        ▼ 8,4°
+                    </div>
+                </div>
+            </div>
+            <div class="delta-row">
+                <div class="dr-label">
+                    🥉 TH-28 Pro
+                    <div class="dr-sub">29 Watt · tanpa heatsink · 09 Juni 15:19</div>
+                </div>
+                <div class="dr-nums">
+                    <div class="delta-chip">
+                        <span class="dc-lbl">Baterai</span>
+                        ▼ 14,2°
+                    </div>
+                    <div class="delta-chip">
+                        <span class="dc-lbl">CPU</span>
+                        ▼ 8,0°
+                    </div>
+                </div>
+            </div>
+            <div class="delta-row">
+                <div class="dr-label">
+                    Kazura Z1 Pro+
+                    <div class="dr-sub">20 Watt · heatsink A1 non modif · 04 Juni 15:21</div>
+                </div>
+                <div class="dr-nums">
+                    <div class="delta-chip">
+                        <span class="dc-lbl">Baterai</span>
+                        ▼ 10,9°
+                    </div>
+                    <div class="delta-chip">
+                        <span class="dc-lbl">CPU</span>
+                        ▼ 7,2°
+                    </div>
+                </div>
+            </div>
+            <div class="delta-row">
+                <div class="dr-label">
+                    TH-28 Pro
+                    <div class="dr-sub">29 Watt · case DIY (tanpa thermal paste) · 09 Juni 16:49</div>
+                </div>
+                <div class="dr-nums">
+                    <div class="delta-chip">
+                        <span class="dc-lbl">Baterai</span>
+                        ▼ 10,8°
+                    </div>
+                    <div class="delta-chip">
+                        <span class="dc-lbl">CPU</span>
+                        ▼ 7,2°
+                    </div>
+                </div>
+            </div>
+            <div class="delta-row">
+                <div class="dr-label">
+                    Kazura Z1 Pro+
+                    <div class="dr-sub">20 Watt · case DIY (tanpa thermal paste) · 06 Juni 16:06</div>
+                </div>
+                <div class="dr-nums">
+                    <div class="delta-chip">
+                        <span class="dc-lbl">Baterai</span>
+                        ▼ 10,2°
+                    </div>
+                    <div class="delta-chip">
+                        <span class="dc-lbl">CPU</span>
+                        ▼ 6,3°
+                    </div>
+                </div>
+            </div>
+            <div class="delta-row">
+                <div class="dr-label">
+                    Kazura Z1 Pro+
+                    <div class="dr-sub">20 Watt · stiker magnet aluminum alloy · 04 Juni 14:56</div>
+                </div>
+                <div class="dr-nums">
+                    <div class="delta-chip">
+                        <span class="dc-lbl">Baterai</span>
+                        ▼ 9,8°
+                    </div>
+                    <div class="delta-chip">
+                        <span class="dc-lbl">CPU</span>
+                        ▼ 6,1°
+                    </div>
+                </div>
+            </div>
+            <div class="delta-row">
+                <div class="dr-label">
+                    ❄️ TH-19 Pro
+                    <div class="dr-sub">20 Watt · heatsink legendary modif · 12 Mei 11:11</div>
+                </div>
+                <div class="dr-nums">
+                    <div class="delta-chip">
+                        <span class="dc-lbl">Baterai</span>
+                        ▼ 7,6°
+                    </div>
+                    <div class="delta-chip">
+                        <span class="dc-lbl">CPU</span>
+                        ▼ 5,1°
+                    </div>
+                </div>
+            </div>
+            <div class="delta-row">
+                <div class="dr-label">
+                    ❄️ Cooler X9
+                    <div class="dr-sub">6 Watt · heatsink legendary modif · 11 Mei 06:38</div>
+                </div>
+                <div class="dr-nums">
+                    <div class="delta-chip">
+                        <span class="dc-lbl">Baterai</span>
+                        ▼ 4,8°
+                    </div>
+                    <div class="delta-chip">
+                        <span class="dc-lbl">CPU</span>
+                        ▼ 3,8°
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="note">* Delta = selisih suhu akhir cooler vs baseline 09 Mei (Baterai 38,9° / CPU 40,2°).</p>
+    </div>
+
+    <!-- ══ SECTION 4: RAW DATA ═══════════════════════════════════ -->
+    <div>
+        <div class="sec-hdr">
+            <span class="sec-num">4</span>
+            <span class="sec-name">Data Lengkap — Detail Pengujian</span>
+        </div>
+        <p class="scroll-hint">← geser tabel →</p>
+        <div class="tbl-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36px">Rank</th>
+                        <th>Waktu</th>
+                        <th style="text-align:left">Skenario</th>
+                        <th>Daya</th>
+                        <th>Baterai Awal</th>
+                        <th>CPU Awal</th>
+                        <th>Baterai Akhir</th>
+                        <th>CPU Akhir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="gr"><td colspan="8">— Baseline (Acuan) —</td></tr>
+                    <tr>
+                        <td class="na">—</td>
+                        <td>30 Apr | 21:04</td>
+                        <td class="txt">Tanpa Pendingin (Rekor Tertinggi)</td>
+                        <td class="na">—</td>
+                        <td class="na">—</td><td class="na">—</td>
+                        <td>38,8°</td><td class="hot">41,2°</td>
+                    </tr>
+                    <tr>
+                        <td class="na">—</td>
+                        <td>09 Mei | 06:17</td>
+                        <td class="txt">Tanpa Pendingin <strong>(Acuan Dasar)</strong></td>
+                        <td class="na">—</td>
+                        <td>31,1°</td><td>31,9°</td>
+                        <td class="hot">38,9°</td><td class="hot">40,2°</td>
+                    </tr>
+                    <tr>
+                        <td class="na">—</td>
+                        <td>12 Mei | 07:26</td>
+                        <td class="txt">Tanpa Pendingin</td>
+                        <td class="na">—</td>
+                        <td class="na">—</td><td class="na">—</td>
+                        <td>38,5°</td><td class="hot">39,8°</td>
+                    </tr>
+                    <tr class="gr"><td colspan="8">— TH-28 Pro —</td></tr>
+                    <tr>
+                        <td style="font-size:16px">🥇</td>
+                        <td>09 Juni | 15:40</td>
+                        <td class="txt">Level 3 + heatsink legendary modif</td>
+                        <td>29 W</td>
+                        <td>30,3°</td><td>33,9°</td>
+                        <td class="cool">25,8°</td><td class="cool">31,3°</td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:16px">🥈</td>
+                        <td>21 Juni | 14:55</td>
+                        <td class="txt">Level 3 + Menggunakan Heatsink A1 Modif</td>
+                        <td>29 W</td>
+                        <td>28,8°</td><td>32,0°</td>
+                        <td class="cool">26,2°</td><td class="cool">31,8°</td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:16px">🥉</td>
+                        <td>09 Juni | 15:19</td>
+                        <td class="txt">Level 3 - Tanpa heatsink</td>
+                        <td>29 W</td>
+                        <td>31,4°</td><td>34,1°</td>
+                        <td class="cool">24,7°</td><td class="cool">32,2°</td>
+                    </tr>
+                    <tr>
+                        <td class="na">—</td>
+                        <td>09 Juni | 16:49</td>
+                        <td class="txt">Level 3 + Case DIY (Tanpa thermal paste)</td>
+                        <td>29 W</td>
+                        <td>29,2°</td><td>31,8°</td>
+                        <td class="cool">28,1°</td><td class="cool">33,0°</td>
+                    </tr>
+                    <tr class="gr"><td colspan="8">— Kazura Z1 Pro+  —</td></tr>
+                    <tr>
+                        <td class="na">—</td>
+                        <td>04 Juni | 15:21</td>
+                        <td class="txt">Level 3 + heatsink A1 non modif</td>
+                        <td>20 W</td>
+                        <td>31,7°</td><td>35,9°</td>
+                        <td class="cool">28,0°</td><td class="cool">33,0°</td>
+                    </tr>
+                    <tr>
+                        <td class="na">—</td>
+                        <td>06 Juni | 16:06</td>
+                        <td class="txt">Level 3 + Case DIY (Tanpa thermal paste)</td>
+                        <td>20 W</td>
+                        <td>29,6°</td><td>33,1°</td>
+                        <td class="cool">28,7°</td><td class="cool">33,9°</td>
+                    </tr>
+                    <tr>
+                        <td class="na">—</td>
+                        <td>04 Juni | 14:56</td>
+                        <td class="txt">Level 3 + Stiker Magnet Aluminum Alloy</td>
+                        <td>20 W</td>
+                        <td>31,2°</td><td>33,4°</td>
+                        <td class="cool">29,1°</td><td class="cool">34,1°</td>
+                    </tr>
+                    <tr class="gr"><td colspan="8">— TH-19 Pro —</td></tr>
+                    <tr>
+                        <td class="na">—</td>
+                        <td>12 Mei | 11:11</td>
+                        <td class="txt">Level 3 + heatsink legendary modif</td>
+                        <td>20 W</td>
+                        <td>30,6°</td><td>32,8°</td>
+                        <td class="cool">31,3°</td><td class="cool">35,1°</td>
+                    </tr>
+                    <tr class="gr"><td colspan="8">— X9 —</td></tr>
+                    <tr>
+                        <td class="na">—</td>
+                        <td>11 Mei | 06:38</td>
+                        <td class="txt">Menggunakan heatsink legendary modif</td>
+                        <td>6 W</td>
+                        <td>33,4°</td><td>34,4°</td>
+                        <td class="cool">34,1°</td><td class="cool">36,4°</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- ══ FOOTER ══════════════════════════════════════════════════ -->
+<div class="footer">
+    Database Pengujian Termal Ripki V24 &nbsp;·&nbsp; Data terbaik per kategori &nbsp;·&nbsp; Semua suhu °C
+</div>
+
+<!-- ▼▼ Tombol Donate (hamburger toggle) ▼▼ -->
+<div class="donate-fab-wrap">
+    <div class="donate-menu" id="donateMenu">
+        <a href="#" id="donateLink" target="_blank" rel="noopener noreferrer">❤️ Donate</a>
+    </div>
+    <button class="donate-fab" id="donateFab" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+</div>
+<script>
+    // 🔧 GANTI baris di bawah ini dengan path/URL foto donasi kamu
+    // Saran: taruh foto di repo yang sama, misal di folder "images/donate.jpg"
+    const DONATE_PHOTO_URL = "images/donate.jpg";
+
+    document.getElementById('donateLink').href = DONATE_PHOTO_URL;
+
+    const fab = document.getElementById('donateFab');
+    const menu = document.getElementById('donateMenu');
+
+    fab.addEventListener('click', function () {
+        fab.classList.toggle('open');
+        menu.classList.toggle('show');
+    });
+    document.getElementById('donateLink').addEventListener('click', function () {
+        fab.classList.remove('open');
+        menu.classList.remove('show');
+    });
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.donate-fab-wrap')) {
+            fab.classList.remove('open');
+            menu.classList.remove('show');
+        }
+    });
+</script>
+<!-- ▲▲ Tombol Donate ▲▲ -->
+
+</body>
+</html>
