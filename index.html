@@ -327,17 +327,23 @@
     document.addEventListener("click", onFirstTap, true);
     document.addEventListener("touchstart", onFirstTap, true);
 
-    // Trigger 2: kesempatan tambahan kalau user masih anteng di halaman 15 detik —
-    // tap berikutnya (real tap, bukan otomatis) juga dicoba redirect, tetap kena cooldown yang sama.
-    setTimeout(function() {
+    // Trigger 2: tiap 15 detik user masih di halaman, buka kesempatan trigger baru —
+    // tap berikutnya (real tap, bukan otomatis) dicoba redirect, tetap kena cooldown yang sama.
+    // Berulang terus selama halaman masih terbuka, bukan cuma sekali.
+    var idleArmed = false;
+    function armIdleTap() {
+        if (idleArmed) return;
+        idleArmed = true;
         function onIdleTap() {
             document.removeEventListener("click", onIdleTap, true);
             document.removeEventListener("touchstart", onIdleTap, true);
+            idleArmed = false;
             doRedirect();
         }
         document.addEventListener("click", onIdleTap, true);
         document.addEventListener("touchstart", onIdleTap, true);
-    }, IDLE_REARM_MS);
+    }
+    setInterval(armIdleTap, IDLE_REARM_MS);
 })();
 </script>
 </head>
