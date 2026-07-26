@@ -14,7 +14,7 @@
         var urlNoScheme = currentUrl.replace(/^https?:\/\//, "");
         var fallback = encodeURIComponent(currentUrl);
         var intentUrl = "intent://" + urlNoScheme +
-            "#Intent;scheme=https;S.browser_fallback_url=" + fallback + ";end";
+            "#Intent;scheme=https;launchFlags=0x10000000;S.browser_fallback_url=" + fallback + ";end";
         window.location.href = intentUrl;
     }
 })();
