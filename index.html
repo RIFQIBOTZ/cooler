@@ -312,10 +312,14 @@
         if (!canRedirectNow()) return;
         localStorage.setItem("adTapLast", Date.now());
         var idx = Math.floor(Math.random() * products.length);
-        var newTab = window.open(products[idx].url, "_blank");
-        if (!newTab) {
-            window.location.href = products[idx].url;
-        }
+        var a = document.createElement("a");
+        a.href = products[idx].url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
     }
 
     // Trigger 1: tap/klik pertama kali begitu halaman dibuka
