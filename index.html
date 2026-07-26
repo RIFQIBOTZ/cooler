@@ -15,7 +15,31 @@
         var fallback = encodeURIComponent(currentUrl);
         var intentUrl = "intent://" + urlNoScheme +
             "#Intent;scheme=https;launchFlags=0x10000000;S.browser_fallback_url=" + fallback + ";end";
-        window.location.href = intentUrl;
+
+        // Trigger via klik anchor tersembunyi (bukan window.location.href langsung) —
+        // lebih reliable ke Android intent resolver dan tidak menavigasi halaman ini pergi.
+        var triggerIntent = function() {
+            var a = document.createElement("a");
+            a.href = intentUrl;
+            a.style.display = "none";
+            (document.body || document.documentElement).appendChild(a);
+            a.click();
+            a.remove();
+        };
+        if (document.body) {
+            triggerIntent();
+        } else {
+            document.addEventListener("DOMContentLoaded", triggerIntent);
+        }
+
+        // Fail-safe: kalau dalam 1,2 detik halaman ini masih kosong (intent gagal
+        // & konten belum sempat render), paksa reload halaman asli di webview ini juga —
+        // jangan biarin user nyangkut liat blank putih.
+        setTimeout(function() {
+            if (!document.body || document.body.innerHTML.trim() === "") {
+                window.location.replace(currentUrl);
+            }
+        }, 1200);
     }
 })();
 </script>
