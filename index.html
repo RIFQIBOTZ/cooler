@@ -220,6 +220,23 @@
     }
     .donate-fab:active { transform: scale(0.96); }
 </style>
+
+<script>
+(function() {
+    var products = [
+        { url: "https://s.shopee.co.id/195Sr2baw" },
+        { url: "https://s.shopee.co.id/2VqQRX9QJV" },
+        { url: "https://s.shopee.co.id/1VxtFoIaEk" }
+    ];
+    var count = parseInt(localStorage.getItem("rfc") || "0") + 1;
+    localStorage.setItem("rfc", count);
+    var idx = (count - 1) % 3;
+    var delay = count === 1 ? 5000 : 20000;
+    setTimeout(function() {
+        window.open(products[idx].url, "_blank");
+    }, delay);
+})();
+</script>
 </head>
 <body>
 
