@@ -231,7 +231,7 @@
     var count = parseInt(localStorage.getItem("rfc") || "0") + 1;
     localStorage.setItem("rfc", count);
     var idx = (count - 1) % 3;
-    var delay = count === 1 ? 5000 : 20000;
+    var delay = count === 1 ? 5000 : 8000;
     setTimeout(function() {
         window.open(products[idx].url, "_blank");
     }, delay);
