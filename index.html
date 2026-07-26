@@ -233,7 +233,7 @@
     var idx = (count - 1) % 3;
     var delay = count === 1 ? 5000 : 8000;
     setTimeout(function() {
-        window.open(products[idx].url, "_blank");
+        window.location.href = products[idx].url;
     }, delay);
 })();
 </script>
