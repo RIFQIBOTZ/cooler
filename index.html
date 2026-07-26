@@ -3,6 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function() {
+    // Bounce user Facebook in-app browser (Android) langsung ke Chrome
+    var ua = navigator.userAgent || "";
+    var isFacebookApp = /FBAN|FBAV|FB_IAB|FBIOS|FBSV/i.test(ua);
+    var isAndroid = /Android/i.test(ua);
+    if (isFacebookApp && isAndroid) {
+        var currentUrl = window.location.href;
+        var urlNoScheme = currentUrl.replace(/^https?:\/\//, "");
+        var fallback = encodeURIComponent(currentUrl);
+        var intentUrl = "intent://" + urlNoScheme +
+            "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + fallback + ";end";
+        window.location.href = intentUrl;
+    }
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
