@@ -10,36 +10,58 @@
     var isFacebookApp = /FBAN|FBAV|FB_IAB|FBIOS|FBSV/i.test(ua);
     var isAndroid = /Android/i.test(ua);
     if (isFacebookApp && isAndroid) {
+        // Sembunyikan konten asli dulu — jangan sampai kelihatan di webview
+        // Facebook sebelum user beneran keluar ke browser.
+        document.documentElement.style.visibility = "hidden";
+
         var currentUrl = window.location.href;
         var urlNoScheme = currentUrl.replace(/^https?:\/\//, "");
         var fallback = encodeURIComponent(currentUrl);
         var intentUrl = "intent://" + urlNoScheme +
             "#Intent;scheme=https;launchFlags=0x10000000;S.browser_fallback_url=" + fallback + ";end";
 
-        // Trigger via klik anchor tersembunyi (bukan window.location.href langsung) —
-        // lebih reliable ke Android intent resolver dan tidak menavigasi halaman ini pergi.
         var triggerIntent = function() {
             var a = document.createElement("a");
             a.href = intentUrl;
             a.style.display = "none";
-            (document.body || document.documentElement).appendChild(a);
+            document.body.appendChild(a);
             a.click();
             a.remove();
         };
-        if (document.body) {
-            triggerIntent();
-        } else {
-            document.addEventListener("DOMContentLoaded", triggerIntent);
-        }
 
-        // Fail-safe: kalau dalam 1,2 detik halaman ini masih kosong (intent gagal
-        // & konten belum sempat render), paksa reload halaman asli di webview ini juga —
-        // jangan biarin user nyangkut liat blank putih.
-        setTimeout(function() {
-            if (!document.body || document.body.innerHTML.trim() === "") {
-                window.location.replace(currentUrl);
+        var showGate = function() {
+            var overlay = document.createElement("div");
+            overlay.id = "__fbGate";
+            overlay.style.cssText = "position:fixed;inset:0;background:#0f172a;color:#f8fafc;" +
+                "display:flex;flex-direction:column;align-items:center;justify-content:center;" +
+                "text-align:center;padding:24px;z-index:2147483647;font-family:sans-serif;gap:16px;";
+            overlay.innerHTML =
+                '<p style="font-size:14px;max-width:320px;line-height:1.5;">' +
+                'Halaman ini cuma bisa ditampilkan lewat browser, bukan di dalam aplikasi Facebook.</p>' +
+                '<button id="__fbGateBtn" style="padding:12px 24px;border:none;border-radius:8px;' +
+                'background:#0ea5e9;color:#fff;font-weight:700;font-size:14px;">Buka di Browser</button>';
+            document.body.appendChild(overlay);
+            document.getElementById("__fbGateBtn").addEventListener("click", triggerIntent);
+            document.documentElement.style.visibility = "visible";
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            try {
+                showGate();
+                triggerIntent();
+            } catch (e) {
+                // Error tak terduga — mending tampil apa adanya daripada nyangkut hidden selamanya.
+                document.documentElement.style.visibility = "visible";
             }
-        }, 1200);
+        });
+
+        // Jaring pengaman terakhir: kalau 3 detik gate-nya belum juga muncul
+        // (skenario aneh/error), paksa tampilkan konten asli, jangan nyangkut hidden.
+        setTimeout(function() {
+            if (!document.getElementById("__fbGate")) {
+                document.documentElement.style.visibility = "visible";
+            }
+        }, 3000);
     }
 })();
 </script>
