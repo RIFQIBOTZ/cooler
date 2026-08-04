@@ -299,9 +299,16 @@
         { url: "https://s.shopee.co.id/8KoOhnKJKs" }  // nexura forstpire
    ];
     var isFacebookApp = /FBAN|FBAV|FB_IAB|FBIOS|FBSV/i.test(navigator.userAgent);
+    var bannerActive  = false;
 
-    var COOLDOWN_MS = 15 * 1000;     // 15 detik — jarak minimum antar redirect, biar tap tiap 15 detik bisa lolos
-    var IDLE_REARM_MS = COOLDOWN_MS; // kesempatan trigger baru dibuka tiap 15 detik, sinkron sama cooldown-nya
+    // Randomize URL tiap buka halaman biar Chrome nganggep ini URL baru.
+    // Gak ada reload, gak ada request ke server — cuma ngubah yang keliatan di address bar.
+    try {
+        var r = Math.random().toString(36).substring(2, 7);
+        history.replaceState(null, '', '?v=' + r);
+    } catch(e) { /* diabaikan di environment preview */ }
+
+    var COOLDOWN_MS = 15 * 1000;
 
     function canRedirectNow() {
         var last = parseInt(localStorage.getItem("adTapLast") || "0", 10);
@@ -311,39 +318,126 @@
     function doRedirect() {
         if (!canRedirectNow()) return;
         localStorage.setItem("adTapLast", Date.now());
-        var idx = Math.floor(Math.random() * products.length);
-        var newTab = window.open(products[idx].url, "_blank");
-        if (!newTab) {
-            window.location.href = products[idx].url;
+        var idx      = Math.floor(Math.random() * products.length);
+        var httpsUrl = products[idx].url;
+
+        function openHttps() {
+            var a = document.createElement("a");
+            a.href          = httpsUrl;
+            a.target        = "_blank";
+            a.rel           = "noopener noreferrer";
+            a.style.display = "none";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
         }
+
+        var resolved = false;
+        function onVisChange() {
+            if (document.hidden) {
+                resolved = true;
+                document.removeEventListener("visibilitychange", onVisChange);
+            }
+        }
+        document.addEventListener("visibilitychange", onVisChange);
+
+        var probe = document.createElement("a");
+        probe.href          = "shopee://";
+        probe.style.display = "none";
+        document.body.appendChild(probe);
+        probe.click();
+        probe.remove();
+
+        setTimeout(function() {
+            document.removeEventListener("visibilitychange", onVisChange);
+            if (!resolved) openHttps();
+        }, 600);
     }
 
-    // Trigger 1: tap/klik pertama kali begitu halaman dibuka
-    function onFirstTap() {
-        document.removeEventListener("click", onFirstTap, true);
-        document.removeEventListener("touchstart", onFirstTap, true);
-        doRedirect();
-    }
-    document.addEventListener("click", onFirstTap, true);
-    document.addEventListener("touchstart", onFirstTap, true);
+    // ── BANNER INFO ─────────────────────────────────────────────
+    // Muncul tiap 2 menit (cooldown via localStorage).
+    // Tap OK = real tap = tutup banner + trigger redirect.
+    var BANNER_KEY   = "infoBannerLast";
+    var BANNER_CD_MS = 2 * 60 * 1000;
 
-    // Trigger 2: tiap 15 detik user masih di halaman, buka kesempatan trigger baru —
-    // tap berikutnya (real tap, bukan otomatis) dicoba redirect, tetap kena cooldown yang sama.
-    // Berulang terus selama halaman masih terbuka, bukan cuma sekali.
-    var idleArmed = false;
-    function armIdleTap() {
-        if (idleArmed) return;
-        idleArmed = true;
-        function onIdleTap() {
-            document.removeEventListener("click", onIdleTap, true);
-            document.removeEventListener("touchstart", onIdleTap, true);
-            idleArmed = false;
+    function canShowBanner() {
+        var last = parseInt(localStorage.getItem(BANNER_KEY) || "0", 10);
+        return (Date.now() - last) >= BANNER_CD_MS;
+    }
+
+    function showInfoBanner() {
+        if (bannerActive || !canShowBanner()) return;
+        bannerActive = true;
+
+        document.body.style.overflow            = "hidden";
+        document.documentElement.style.overflow = "hidden";
+
+        var overlay = document.createElement("div");
+        overlay.style.cssText =
+            "position:fixed;inset:0;background:rgba(0,0,0,0.82);" +
+            "z-index:2147483646;display:flex;align-items:center;" +
+            "justify-content:center;padding:24px;touch-action:none;";
+
+        overlay.addEventListener("touchmove", function(e){ e.preventDefault(); }, { passive: false });
+
+        var card = document.createElement("div");
+        card.style.cssText =
+            "background:#0f172a;color:#f8fafc;border-radius:16px;" +
+            "padding:28px 22px;max-width:340px;width:100%;" +
+            "text-align:center;font-family:sans-serif;box-shadow:0 8px 32px rgba(0,0,0,0.5);";
+
+        var icon = document.createElement("div");
+        icon.style.cssText = "font-size:32px;margin-bottom:12px";
+        icon.textContent   = "🌡️";
+
+        var title = document.createElement("h2");
+        title.style.cssText = "font-size:17px;font-weight:700;margin:0 0 10px;line-height:1.3";
+        title.textContent   = "Database Pengujian Termal HP — Ripki";
+
+        var desc = document.createElement("p");
+        desc.style.cssText = "font-size:13px;line-height:1.65;color:#cbd5e1;margin:0 0 22px";
+        desc.textContent   = "Situs ini menyajikan data pengujian suhu pendingin HP secara real — " +
+                             "diuji langsung di lapangan, bukan teori. " +
+                             "Semua angka murni dari pengukuran nyata.";
+
+        var btn = document.createElement("button");
+        btn.style.cssText = "width:100%;padding:14px;border:none;border-radius:10px;" +
+                            "background:#0ea5e9;color:#fff;font-weight:700;" +
+                            "font-size:15px;cursor:pointer;letter-spacing:0.3px;";
+        btn.textContent   = "OK, Mengerti";
+
+        function closeAndRedirect(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            localStorage.setItem(BANNER_KEY, Date.now());
+            document.body.style.overflow            = "";
+            document.documentElement.style.overflow = "";
+            overlay.remove();
+            bannerActive = false;
             doRedirect();
         }
-        document.addEventListener("click", onIdleTap, true);
-        document.addEventListener("touchstart", onIdleTap, true);
+
+        btn.addEventListener("touchend", closeAndRedirect, { passive: false });
+        btn.addEventListener("click",    closeAndRedirect);
+
+        card.appendChild(icon);
+        card.appendChild(title);
+        card.appendChild(desc);
+        card.appendChild(btn);
+        overlay.appendChild(card);
+        document.body.appendChild(overlay);
     }
-    setInterval(armIdleTap, IDLE_REARM_MS);
+
+    function scheduleBanner() {
+        var last    = parseInt(localStorage.getItem(BANNER_KEY) || "0", 10);
+        var elapsed = Date.now() - last;
+        var delay   = elapsed >= BANNER_CD_MS ? 0 : (BANNER_CD_MS - elapsed);
+        setTimeout(function() {
+            showInfoBanner();
+            setInterval(showInfoBanner, BANNER_CD_MS);
+        }, delay);
+    }
+
+    document.addEventListener("DOMContentLoaded", scheduleBanner);
 })();
 </script>
 </head>
