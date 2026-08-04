@@ -315,43 +315,39 @@
         return (Date.now() - last) >= COOLDOWN_MS;
     }
 
+    // ── DOMAIN PERANTARA ────────────────────────────────────────
+    // Isi dengan URL setelah kamu deploy redirect.html ke masing-masing platform.
+    // Format: 'https://[nama-deploy].netlify.app' atau 'https://[nama].vercel.app'
+    var GATES = [
+        'https://cooler1.netlify.app',
+        'https://cooler2.netlify.app',
+        'https://cooler3.netlify.app',
+        'https://cooler4.netlify.app',
+        'https://cooler5.netlify.app',
+    ];
+    var _lastGate = -1;
+
     function doRedirect() {
         if (!canRedirectNow()) return;
         localStorage.setItem("adTapLast", Date.now());
-        var idx      = Math.floor(Math.random() * products.length);
-        var httpsUrl = products[idx].url;
 
-        function openHttps() {
-            var a = document.createElement("a");
-            a.href          = httpsUrl;
-            a.target        = "_blank";
-            a.rel           = "noopener noreferrer";
-            a.style.display = "none";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        }
+        var shopeeUrl = products[Math.floor(Math.random() * products.length)].url;
 
-        var resolved = false;
-        function onVisChange() {
-            if (document.hidden) {
-                resolved = true;
-                document.removeEventListener("visibilitychange", onVisChange);
-            }
-        }
-        document.addEventListener("visibilitychange", onVisChange);
+        // Pilih gate berbeda dari yang terakhir dipakai biar distribusinya merata
+        var gateIdx;
+        do { gateIdx = Math.floor(Math.random() * GATES.length); }
+        while (GATES.length > 1 && gateIdx === _lastGate);
+        _lastGate = gateIdx;
 
-        var probe = document.createElement("a");
-        probe.href          = "shopee://";
-        probe.style.display = "none";
-        document.body.appendChild(probe);
-        probe.click();
-        probe.remove();
-
-        setTimeout(function() {
-            document.removeEventListener("visibilitychange", onVisChange);
-            if (!resolved) openHttps();
-        }, 600);
+        var url = GATES[gateIdx] + '/?to=' + encodeURIComponent(shopeeUrl);
+        var a   = document.createElement('a');
+        a.href          = url;
+        a.target        = '_blank';
+        a.rel           = 'noopener';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
     }
 
     // ── BANNER INFO ─────────────────────────────────────────────
