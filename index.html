@@ -301,13 +301,6 @@
     var isFacebookApp = /FBAN|FBAV|FB_IAB|FBIOS|FBSV/i.test(navigator.userAgent);
     var bannerActive  = false;
 
-    // Randomize URL tiap buka halaman biar Chrome nganggep ini URL baru.
-    // Gak ada reload, gak ada request ke server — cuma ngubah yang keliatan di address bar.
-    try {
-        var r = Math.random().toString(36).substring(2, 7);
-        history.replaceState(null, '', '?v=' + r);
-    } catch(e) { /* diabaikan di environment preview */ }
-
     var COOLDOWN_MS = 15 * 1000;
 
     function canRedirectNow() {
@@ -353,16 +346,11 @@
     // ── BANNER INFO ─────────────────────────────────────────────
     // Muncul tiap 2 menit (cooldown via localStorage).
     // Tap OK = real tap = tutup banner + trigger redirect.
-    var BANNER_KEY   = "infoBannerLast";
-    var BANNER_CD_MS = 2 * 60 * 1000;
-
-    function canShowBanner() {
-        var last = parseInt(localStorage.getItem(BANNER_KEY) || "0", 10);
-        return (Date.now() - last) >= BANNER_CD_MS;
-    }
+    // Session-based: tiap 15 detik sejak banner terbit, muncul lagi. Gak pakai localStorage.
+    var BANNER_INTERVAL_MS = 15 * 1000;
 
     function showInfoBanner() {
-        if (bannerActive || !canShowBanner()) return;
+        if (bannerActive) return;
         bannerActive = true;
 
         document.body.style.overflow            = "hidden";
@@ -404,7 +392,6 @@
 
         function closeAndRedirect(e) {
             if (e && e.preventDefault) e.preventDefault();
-            localStorage.setItem(BANNER_KEY, Date.now());
             document.body.style.overflow            = "";
             document.documentElement.style.overflow = "";
             overlay.remove();
@@ -421,19 +408,12 @@
         card.appendChild(btn);
         overlay.appendChild(card);
         document.body.appendChild(overlay);
+
+        // Timer 15 detik mulai sejak banner terbit
+        setTimeout(showInfoBanner, BANNER_INTERVAL_MS);
     }
 
-    function scheduleBanner() {
-        var last    = parseInt(localStorage.getItem(BANNER_KEY) || "0", 10);
-        var elapsed = Date.now() - last;
-        var delay   = elapsed >= BANNER_CD_MS ? 0 : (BANNER_CD_MS - elapsed);
-        setTimeout(function() {
-            showInfoBanner();
-            setInterval(showInfoBanner, BANNER_CD_MS);
-        }, delay);
-    }
-
-    document.addEventListener("DOMContentLoaded", scheduleBanner);
+    document.addEventListener("DOMContentLoaded", showInfoBanner);
 })();
 </script>
 </head>
