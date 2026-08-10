@@ -1,66 +1,80 @@
-# Cooler Lab
+<h1 align="center">Cooler Lab</h1>
 
 <p align="center">
-  <strong>Thermal Test & Cooling Database</strong><br>
-  Benchmark data, cooling experiments, and comparison results in one lightweight web project.
+  <b>Thermal benchmark notes, cooling experiments, and comparison results.</b><br>
+  A lightweight lab log for keeping test data readable, organized, and easy to scan.
 </p>
 
 <p align="center">
-  <a href="https://github.com/RIFQIBOTZ/cooler">Repository</a> ·
-  <a href="https://github.com/RIFQIBOTZ/cooler/issues">Issues</a>
+  <img alt="status" src="https://img.shields.io/badge/status-active-0ea5e9?style=for-the-badge">
+  <img alt="license" src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge">
+  <img alt="stack" src="https://img.shields.io/badge/stack-static%20site-slate?style=for-the-badge">
 </p>
 
 ---
 
-## Overview
+## What this is
 
-Cooler Lab is a small, mobile-friendly database for documenting thermal tests and comparing cooling solutions.
+**Cooler Lab** is a small static project for recording thermal tests and comparing cooling setups. The goal is not to look busy. The goal is to make results easy to read, easy to compare, and easy to maintain.
 
-The project is intentionally lightweight: the data and presentation live in a simple static web interface, making it easy to maintain and publish with GitHub Pages or another static host.
+## Snapshot
 
-## What’s Inside
+| Area | Details |
+|---|---|
+| Testing | Thermal benchmark records |
+| Comparison | Cooler-to-cooler results |
+| Data | Temperature & performance observations |
+| UI | Responsive, mobile-friendly |
+| Stack | Lightweight static HTML/CSS/JS |
 
-- Thermal benchmark results
-- Cooler-to-cooler comparisons
-- Temperature and performance observations
-- Responsive interface for desktop and mobile
-- Image assets for supporting test data
-
-## Project Structure
+## Project layout
 
 ```text
 cooler/
-├── index.html      # Main web interface
-├── images/         # Test images and visual assets
-└── README.md       # Project documentation
+├── index.html   # main interface
+├── images/      # supporting images and visual assets
+└── README.md    # project documentation
 ```
 
-## Design Goals
+## Design direction
 
-**Readable** — important measurements should be easy to scan.
+| Principle | Goal |
+|---|---|
+| Readable | Measurements should be obvious at a glance |
+| Comparable | Different setups should be easy to evaluate |
+| Lightweight | No unnecessary framework or build pipeline |
+| Maintainable | Simple files, simple structure |
 
-**Comparable** — results are presented so different cooling setups can be evaluated side by side.
-
-**Lightweight** — no unnecessary framework or build pipeline.
-
-**Maintainable** — simple project structure and static assets.
-
-## Local Usage
-
-Clone the repository and open `index.html` in a modern browser.
+## Quick start
 
 ```bash
 git clone https://github.com/RIFQIBOTZ/cooler.git
 cd cooler
 ```
 
-For development, any local static server can be used.
+Open `index.html` directly, or run the folder with any local static server.
 
-## Data Note
+## Test methodology
 
-Benchmark results are experimental measurements. Test conditions, hardware, ambient temperature, mounting pressure, thermal interface material, and measurement method can affect the outcome.
+Every benchmark can be affected by conditions such as:
 
-Use the published results as test records and comparisons, not as universal performance guarantees.
+- ambient temperature
+- device and cooler hardware
+- thermal paste / thermal interface material
+- mounting pressure and contact
+- workload and test duration
+- measurement method
+
+Because of this, results should be treated as **experimental records**, not universal performance guarantees.
+
+## Roadmap
+
+- [x] Lightweight benchmark database
+- [x] Mobile-friendly interface
+- [x] Cooler comparison records
+- [ ] Visual charts for test runs
+- [ ] More structured benchmark metadata
+- [ ] Historical result tracking
 
 ## License
 
@@ -69,5 +83,5 @@ MIT License
 ---
 
 <p align="center">
-  <sub>Built as a lightweight personal thermal testing database.</sub>
+  <sub>Built for clean thermal logging and practical cooling experiments.</sub>
 </p>
