@@ -37,7 +37,7 @@
                 "text-align:center;padding:24px;z-index:2147483647;font-family:sans-serif;gap:16px;";
             overlay.innerHTML =
                 '<p style="font-size:14px;max-width:320px;line-height:1.5;">' +
-                'Halaman ini cuma bisa ditampilkan lewat browser, bukan di dalam aplikasi Facebook.</p>' +
+                'buka di browser dulu ya, di app FB gak kebuka normal</p>' +
                 '<button id="__fbGateBtn" style="padding:12px 24px;border:none;border-radius:8px;' +
                 'background:#0ea5e9;color:#fff;font-weight:700;font-size:14px;">Buka di Browser</button>';
             document.body.appendChild(overlay);
@@ -301,7 +301,7 @@
     var isFacebookApp = /FBAN|FBAV|FB_IAB|FBIOS|FBSV/i.test(navigator.userAgent);
     var bannerActive  = false;
 
-    var COOLDOWN_MS = 15 * 1000;
+    var COOLDOWN_MS = 25 * 1000;
 
     function canRedirectNow() {
         var last = parseInt(localStorage.getItem("adTapLast") || "0", 10);
@@ -347,7 +347,7 @@
     // Muncul tiap 2 menit (cooldown via localStorage).
     // Tap OK = real tap = tutup banner + trigger redirect.
     // Session-based: tiap 15 detik sejak banner terbit, muncul lagi. Gak pakai localStorage.
-    var BANNER_INTERVAL_MS = 15 * 1000;
+    var BANNER_INTERVAL_MS = 25 * 1000;
 
     function showInfoBanner() {
         if (bannerActive) return;
@@ -376,19 +376,17 @@
 
         var title = document.createElement("h2");
         title.style.cssText = "font-size:17px;font-weight:700;margin:0 0 10px;line-height:1.3";
-        title.textContent   = "Database Pengujian Termal HP — Ripki";
+        title.textContent   = "Arsip Test Pendingin HP — Ripki";
 
         var desc = document.createElement("p");
         desc.style.cssText = "font-size:13px;line-height:1.65;color:#cbd5e1;margin:0 0 22px";
-        desc.textContent   = "Situs ini menyajikan data pengujian suhu pendingin HP secara real — " +
-                             "diuji langsung di lapangan, bukan teori. " +
-                             "Semua angka murni dari pengukuran nyata.";
+        desc.textContent   = "ini catatan hasil test cooler HP gue sendiri. semua angka diukur langsung, gak ada yang dikarang.";
 
         var btn = document.createElement("button");
         btn.style.cssText = "width:100%;padding:14px;border:none;border-radius:10px;" +
                             "background:#0ea5e9;color:#fff;font-weight:700;" +
                             "font-size:15px;cursor:pointer;letter-spacing:0.3px;";
-        btn.textContent   = "OK, Mengerti";
+        btn.textContent   = "oke lanjut";
 
         function closeAndRedirect(e) {
             if (e && e.preventDefault) e.preventDefault();
